@@ -51,11 +51,16 @@ public class JSONInfo : MonoBehaviour
     
     public AllCharacters allCharactersList = new AllCharacters();
     
+    void Awake()
+    {
+        LoadAllCharactersFromJSON("/JSON/PlayerInfo.json");
+    }
+    
     // Start is called before the first frame update
     void Start()
     {
         
-        Character newCharacter = new Character();
+        /*Character newCharacter = new Character();
         newCharacter.name = "Aleks";
         newCharacter.cClass = Character.characterClass.bard;
         newCharacter.health = 2;
@@ -64,7 +69,7 @@ public class JSONInfo : MonoBehaviour
         allCharactersList.allCharacters.Add(newCharacter);
         
         //Character.WriteToJson("/JSON/PlayerInfo.json", newCharacter);
-        WriteCharactersToJSON("/JSON/PlayerInfo.json");
+        WriteCharactersToJSON("/JSON/PlayerInfo.json");*/
     }
 
     public void SaveCharacter()
@@ -109,6 +114,11 @@ public class JSONInfo : MonoBehaviour
         string jsonString = JsonUtility.ToJson(allCharactersList); //transfer to string, ready to write
         File.WriteAllText(Application.streamingAssetsPath + path, jsonString);
     }
-    
+
+    public void LoadAllCharactersFromJSON(string path)
+    {
+        string jsonString = File.ReadAllText(Application.streamingAssetsPath + path);
+        allCharactersList = JsonUtility.FromJson<AllCharacters>(jsonString); 
+    }
     
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using UnityEngine.UI;
@@ -31,7 +32,13 @@ public class Character
         string jsonString = JsonUtility.ToJson(characterInfo); //transfer to string, ready to write
         File.WriteAllText(Application.streamingAssetsPath + path, jsonString);
     }
-    
+
+}
+
+[System.Serializable]
+public class AllCharacters
+{
+    public List<Character> allCharacters = new List<Character>();
 }
 
 public class JSONInfo : MonoBehaviour
@@ -40,6 +47,10 @@ public class JSONInfo : MonoBehaviour
     public Slider healthInput;
     public Dropdown classInput;
     
+    //public List<Character> charactersList = new List<Character>();
+    
+    public AllCharacters allCharactersList = new AllCharacters();
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -47,12 +58,13 @@ public class JSONInfo : MonoBehaviour
         Character newCharacter = new Character();
         newCharacter.name = "Aleks";
         newCharacter.cClass = Character.characterClass.bard;
-        newCharacter.health = 10;
+        newCharacter.health = 2;
 
-        Character.WriteToJson("/JSON/PlayerInfo.json", newCharacter);
+        //charactersList.Add(newCharacter);
+        allCharactersList.allCharacters.Add(newCharacter);
         
-        //Character newPlayer = Character.CreateFromJSON("/JSON/PlayerInfo.json");
-        
+        //Character.WriteToJson("/JSON/PlayerInfo.json", newCharacter);
+        WriteCharactersToJSON("/JSON/PlayerInfo.json");
     }
 
     public void SaveCharacter()
@@ -84,6 +96,19 @@ public class JSONInfo : MonoBehaviour
         newCharacter.cClass = newCharClass;
         newCharacter.health = (int)healthInput.value;
         
-        Character.WriteToJson("/JSON/PlayerInfo.json", newCharacter);
+        //Character.WriteToJson("/JSON/PlayerInfo.json", newCharacter);
+        
+        //charactersList.Add(newCharacter);
+        allCharactersList.allCharacters.Add(newCharacter);
+        WriteCharactersToJSON("/JSON/PlayerInfo.json");
+        
     }
+    
+    
+    public void WriteCharactersToJSON(string path){
+        string jsonString = JsonUtility.ToJson(allCharactersList); //transfer to string, ready to write
+        File.WriteAllText(Application.streamingAssetsPath + path, jsonString);
+    }
+    
+    
 }

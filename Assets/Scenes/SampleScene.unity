@@ -2148,6 +2148,10 @@ MonoBehaviour:
   nameInput: {fileID: 485100737}
   healthInput: {fileID: 2058178054}
   classInput: {fileID: 7642596}
+  charactersList:
+  - name: Tester
+    cClass: 3
+    health: 1
 --- !u!4 &1240346614
 Transform:
   m_ObjectHideFlags: 0

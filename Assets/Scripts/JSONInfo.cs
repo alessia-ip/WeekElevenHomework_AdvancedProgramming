@@ -43,68 +43,91 @@ public class AllCharacters
 
 public class JSONInfo : MonoBehaviour
 {
+    [Header("UI Elements Referenced")]
     public InputField nameInput;
     public Slider healthInput;
     public Dropdown classInput;
-
+    public Toggle overwriteToggle;
+    
     //public List<Character> charactersList = new List<Character>();
     
     public AllCharacters allCharactersList = new AllCharacters();
+
+    private int charInt;
+    private bool canOverwrite = false;
     
     void Awake()
     {
         LoadAllCharactersFromJSON("/JSON/PlayerInfo.json");
     }
     
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-        /*Character newCharacter = new Character();
-        newCharacter.name = "Aleks";
-        newCharacter.cClass = Character.characterClass.bard;
-        newCharacter.health = 2;
-
-        //charactersList.Add(newCharacter);
-        allCharactersList.allCharacters.Add(newCharacter);
-        
-        //Character.WriteToJson("/JSON/PlayerInfo.json", newCharacter);
-        WriteCharactersToJSON("/JSON/PlayerInfo.json");*/
-    }
-
     public void SaveCharacter()
     {
-        Character newCharacter = new Character();
-        newCharacter.name = nameInput.text;
-        
-        var newCharClass = Character.characterClass.bard;
 
-        switch (classInput.value)
-        { 
-            case 0:
-                newCharClass = Character.characterClass.mage;
-                break;
-            case 1:
-               newCharClass = Character.characterClass.rogue;
-               break;
-            case 2:
-                newCharClass = Character.characterClass.bard;
-                break;
-            case 3:
-                newCharClass = Character.characterClass.warrior;
-                break;
-            case 4:
-                newCharClass = Character.characterClass.paladin;
-                break;
+        //if we can't overwrite a character OR don't want to, we want to make a new character in the list
+        if (!canOverwrite || !overwriteToggle.isOn) 
+        {
+            Character newCharacter = new Character();
+            newCharacter.name = nameInput.text;
+        
+            var newCharClass = Character.characterClass.bard;
+
+            switch (classInput.value)
+            { 
+                case 0:
+                    newCharClass = Character.characterClass.mage;
+                    break;
+                case 1:
+                    newCharClass = Character.characterClass.rogue;
+                    break;
+                case 2:
+                    newCharClass = Character.characterClass.bard;
+                    break;
+                case 3:
+                    newCharClass = Character.characterClass.warrior;
+                    break;
+                case 4:
+                    newCharClass = Character.characterClass.paladin;
+                    break;
+            }
+        
+            newCharacter.cClass = newCharClass;
+            newCharacter.health = (int)healthInput.value;
+            
+            allCharactersList.allCharacters.Add(newCharacter);
         }
-        
-        newCharacter.cClass = newCharClass;
-        newCharacter.health = (int)healthInput.value;
-        
-        //Character.WriteToJson("/JSON/PlayerInfo.json", newCharacter);
-        
-        //charactersList.Add(newCharacter);
-        allCharactersList.allCharacters.Add(newCharacter);
+        else //overwrite version: if we can overwrite AND the toggle is checked
+        {
+            allCharactersList.allCharacters[charInt].name = nameInput.text;
+            allCharactersList.allCharacters[charInt].health = (int) healthInput.value;
+            
+            var newCharClass = Character.characterClass.bard;
+
+            switch (classInput.value)
+            { 
+                case 0:
+                    newCharClass = Character.characterClass.mage;
+                    break;
+                case 1:
+                    newCharClass = Character.characterClass.rogue;
+                    break;
+                case 2:
+                    newCharClass = Character.characterClass.bard;
+                    break;
+                case 3:
+                    newCharClass = Character.characterClass.warrior;
+                    break;
+                case 4:
+                    newCharClass = Character.characterClass.paladin;
+                    break;
+            }
+
+            allCharactersList.allCharacters[charInt].cClass = newCharClass;
+        }
+
+        canOverwrite = false;
+        overwriteToggle.isOn = false;
+        overwriteToggle.gameObject.SetActive(false);
         WriteCharactersToJSON("/JSON/PlayerInfo.json");
         
     }
@@ -124,7 +147,7 @@ public class JSONInfo : MonoBehaviour
     public void LoadRandomCharacter()
     {
         
-        var charInt = Random.Range(0, allCharactersList.allCharacters.Count);
+        charInt = Random.Range(0, allCharactersList.allCharacters.Count - 1);
 
         nameInput.text = allCharactersList.allCharacters[charInt].name;
         healthInput.value = allCharactersList.allCharacters[charInt].health;
@@ -149,7 +172,11 @@ public class JSONInfo : MonoBehaviour
         }
         
         
+        overwriteToggle.gameObject.SetActive(true);
+        overwriteToggle.gameObject.GetComponentInChildren<Text>().text = "Overwrite " + nameInput.text + " ?";
+        canOverwrite = true;
     }
+    
 
     public void DestroyAllPreviousCharacters()
     {

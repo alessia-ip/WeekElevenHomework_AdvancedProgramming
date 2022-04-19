@@ -46,7 +46,7 @@ public class JSONInfo : MonoBehaviour
     public InputField nameInput;
     public Slider healthInput;
     public Dropdown classInput;
-    
+
     //public List<Character> charactersList = new List<Character>();
     
     public AllCharacters allCharactersList = new AllCharacters();
@@ -119,6 +119,41 @@ public class JSONInfo : MonoBehaviour
     {
         string jsonString = File.ReadAllText(Application.streamingAssetsPath + path);
         allCharactersList = JsonUtility.FromJson<AllCharacters>(jsonString); 
+    }
+
+    public void LoadRandomCharacter()
+    {
+        
+        var charInt = Random.Range(0, allCharactersList.allCharacters.Count);
+
+        nameInput.text = allCharactersList.allCharacters[charInt].name;
+        healthInput.value = allCharactersList.allCharacters[charInt].health;
+
+        switch (allCharactersList.allCharacters[charInt].cClass)
+        {
+            case Character.characterClass.mage:
+                classInput.value = 0;
+                break;
+            case Character.characterClass.rogue:
+                classInput.value = 1;
+                break;
+            case Character.characterClass.bard:
+                classInput.value = 2;
+                break;
+            case Character.characterClass.warrior:
+                classInput.value = 3;
+                break;
+            case Character.characterClass.paladin:
+                classInput.value = 4;
+                break;
+        }
+        
+        
+    }
+
+    public void DestroyAllPreviousCharacters()
+    {
+        
     }
     
 }

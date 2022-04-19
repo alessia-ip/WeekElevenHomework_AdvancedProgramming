@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.IO;
+using UnityEngine.UI;
 
 [System.Serializable]
 public class Character
@@ -35,6 +36,10 @@ public class Character
 
 public class JSONInfo : MonoBehaviour
 {
+    public InputField nameInput;
+    public Slider healthInput;
+    public Dropdown classInput;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -45,9 +50,40 @@ public class JSONInfo : MonoBehaviour
         newCharacter.health = 10;
 
         Character.WriteToJson("/JSON/PlayerInfo.json", newCharacter);
-
-
-        Character newPlayer = Character.CreateFromJSON("/JSON/PlayerInfo.json");
         
+        //Character newPlayer = Character.CreateFromJSON("/JSON/PlayerInfo.json");
+        
+    }
+
+    public void SaveCharacter()
+    {
+        Character newCharacter = new Character();
+        newCharacter.name = nameInput.text;
+        
+        var newCharClass = Character.characterClass.bard;
+
+        switch (classInput.value)
+        { 
+            case 0:
+                newCharClass = Character.characterClass.mage;
+                break;
+            case 1:
+               newCharClass = Character.characterClass.rogue;
+               break;
+            case 2:
+                newCharClass = Character.characterClass.bard;
+                break;
+            case 3:
+                newCharClass = Character.characterClass.warrior;
+                break;
+            case 4:
+                newCharClass = Character.characterClass.paladin;
+                break;
+        }
+        
+        newCharacter.cClass = newCharClass;
+        newCharacter.health = (int)healthInput.value;
+        
+        Character.WriteToJson("/JSON/PlayerInfo.json", newCharacter);
     }
 }

@@ -48,6 +48,7 @@ public class JSONInfo : MonoBehaviour
     public Slider healthInput;
     public Dropdown classInput;
     public Toggle overwriteToggle;
+    public GameObject deleteButton;
     
     //public List<Character> charactersList = new List<Character>();
     
@@ -146,6 +147,7 @@ public class JSONInfo : MonoBehaviour
 
     public void LoadRandomCharacter()
     {
+        if (allCharactersList.allCharacters.Count == 0) return;
         
         charInt = Random.Range(0, allCharactersList.allCharacters.Count - 1);
 
@@ -171,6 +173,8 @@ public class JSONInfo : MonoBehaviour
                 break;
         }
         
+        deleteButton.SetActive(true);
+        deleteButton.GetComponentInChildren<Text>().text = "Delete \n" + nameInput.text;
         
         overwriteToggle.gameObject.SetActive(true);
         overwriteToggle.gameObject.GetComponentInChildren<Text>().text = "Overwrite " + nameInput.text + " ?";
@@ -180,7 +184,25 @@ public class JSONInfo : MonoBehaviour
 
     public void DestroyAllPreviousCharacters()
     {
+        allCharactersList.allCharacters.Clear();
+        WriteCharactersToJSON("/JSON/PlayerInfo.json");
+    }
+
+
+    public void DeleteCharacter()
+    {
+        allCharactersList.allCharacters.RemoveAt(charInt);
         
+        nameInput.text = "";
+        healthInput.value = 0;
+        classInput.value = 0;
+        
+        canOverwrite = false;
+        deleteButton.SetActive(false);
+        overwriteToggle.gameObject.SetActive(false);
+        WriteCharactersToJSON("/JSON/PlayerInfo.json");
+        
+       
     }
     
 }
